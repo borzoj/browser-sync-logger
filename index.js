@@ -33,23 +33,24 @@ module.exports.plugin = function (server, client, bs) {
             argsArray.unshift('');
         }
         loggerError.error.apply(loggerError, argsArray);
-    }
+    };
 
     function handleLog(argsObject) {
         var argsArray = Object.keys(argsObject).map(key => argsObject[key]);
+        if (argsArray[0] instanceof Object) {
             argsArray.unshift('');
         }
         loggerInfo.info.apply(loggerInfo, argsArray);
-    }
+    };
 
     function handleConnect(client) {
         client.on("console:error", handleError);
         client.on("console:log", handleLog);
-    }
+    };
 
     client.io.sockets.on("connect", handleConnect);
 
-}
+};
 
 module.exports.hooks = {
     "client:js": [
@@ -63,7 +64,7 @@ module.exports.hooks = {
         "};",
         "var oldLog = console.log;  ",
         "console.log = function () { ",
-        "  ___browserSync___.socket.emit('console:error', arguments); ",
+        "  ___browserSync___.socket.emit('console:log', arguments); ",
         "  oldLog.apply(console, arguments); ",
         "};",
         "})(console);"
